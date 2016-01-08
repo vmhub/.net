@@ -1,0 +1,31 @@
+﻿@model ItemGrabber.Models.Search
+
+@{
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    AjaxOptions ajaxOptions = new AjaxOptions
+    {
+        UpdateTargetId = "update",
+        LoadingElementId = "loading",
+        // peaks olema Url.Action
+    };
+}
+
+@using (Ajax.BeginForm("Output", ajaxOptions))
+{
+    <div id="head" class="text-center">
+        <div class="form-group">
+            @Html.TextBoxFor(x => x.neededItem, new { @class = "form-control", @placeholder = "Type your item name" })
+        </div>
+        <div class="block">
+            @Html.DropDownListFor(x => x.searchIndex, new SelectList(Model.selectList, "Value", "Text"), new { @id = "drop" })
+            <input name="submit" type="submit" id="search" value="Search for items on Amazon" />
+        </div>
+           
+     </div>
+
+}
+<div id="loading" style="display:none;" class="text-center">
+    <img src="~/Content/img/loader.gif" />
+</div>
+<div class="text-center" id="update"></div>
+

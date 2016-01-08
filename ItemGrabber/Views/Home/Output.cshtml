@@ -1,0 +1,68 @@
+﻿@using ItemGrabber.Models
+@using System.Globalization
+@model  ItemInfo
+@{
+    Layout = null;
+    AjaxOptions ajaxOptions = new AjaxOptions
+    {
+        UpdateTargetId = "nextupd",
+        LoadingElementId = "loading",
+        // peaks olema Url.Action
+    };
+    
+}
+@if (Model != null) { 
+    <div class="text-center" id="nextupd">
+
+    <div class="text-center">
+        <div id="loading" style="display:none;" class="text-center">
+            <img src="~/Content/img/loader.gif" />
+        </div>
+    </div>
+
+    @if (Model.totalPages > 1)
+    {
+        if (Model.totalPages > Model.maxPage)
+        {
+            <h2 class="msg">Page @Model.currentPage out of @Model.maxPage (@Model.totalPages available, narrow down your search)</h2>
+        }
+        else
+        {<h2>Page @Model.currentPage out of @Model.totalPages</h2>}
+
+        using (Ajax.BeginForm("Output", ajaxOptions))
+        {   if(Model.currentValue!=null){
+            @Html.DropDownListFor(x => x.currency, new SelectList(Model.currentValue, "Value", "Key"), new { @class = "form-control", @id = "dropDownId", @onchange = "populate();" }) 
+        }//
+                  <div class="sweg">
+                      <input name="submit" type="submit" class="prev" value="previous" style="text-align: center" />
+                      <input name="submit" type="submit" class="next" value="next" style="text-align: center" />
+                  </div>
+        }
+    }
+    else if (Model.totalPages == 0)
+    {
+        <h1 class="msg"> Sorry, no items found</h1>
+    }
+       
+            <table class="table table-striped" id="mytable">
+                <tbody>
+                    @{decimal currency = Decimal.Parse(Model.currency, CultureInfo.InvariantCulture);}
+                    @foreach (Items i in Model.ItemList) {
+                        string price="unknown, check the link";
+                        if (i.price != null) {
+                            price=(Math.Round(Decimal.Multiply(currency, Decimal.Parse(i.price, CultureInfo.InvariantCulture)), 2)).ToString();
+                        }
+                        <tr>
+                            <td><img src="@i.img" /></td>
+                            <td class="price">@price</td>
+                            <td>@i.title</td>
+                            <td><a href="@i.URL" target="_blank">View on Amazon</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+      
+</div>
+
+
+}
